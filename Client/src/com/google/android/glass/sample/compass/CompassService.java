@@ -74,7 +74,7 @@ public class CompassService extends Service {
     private final CompassBinder mBinder = new CompassBinder();
 
     private OrientationManager mOrientationManager;
-    private Landmarks mLandmarks;
+    public Landmarks mLandmarks;
     private TextToSpeech mSpeech;
 
     private LiveCard mLiveCard;

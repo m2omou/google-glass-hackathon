@@ -16,9 +16,12 @@
 
 package com.google.android.glass.sample.compass;
 
+import com.google.android.glass.sample.compass.model.Landmarks;
+import com.google.android.glass.sample.compass.model.Place;
 import com.google.android.glass.sample.compass.util.MathUtils;
 
 import android.app.Activity;
+import android.app.PendingIntent.CanceledException;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -30,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.lang.Runnable;
+import java.util.ListIterator;
 
 /**
  * This activity manages the options menu that appears when the user taps on the compass's live
@@ -38,6 +42,8 @@ import java.lang.Runnable;
 public class CompassMenuActivity extends Activity {
 
     private final Handler mHandler = new Handler();
+    
+    private ListIterator<Place> iter = Landmarks.mPlaces.listIterator();
 
     private CompassService.CompassBinder mCompassService;
     private boolean mAttachedToWindow;
@@ -94,7 +100,15 @@ public class CompassMenuActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.read_aloud:
-                mCompassService.readHeadingAloud();
+                if (iter.hasNext()) {
+                	Intent intent = new Intent(getApplicationContext(), ShowFacts.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("place", iter.next());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                } else {
+                	iter = Landmarks.mPlaces.listIterator();
+                }
                 return true;
             case R.id.stop:
                 // Stop the service at the end of the message queue for proper options menu

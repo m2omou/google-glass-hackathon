@@ -42,6 +42,10 @@
         <activity
             android:name="com.google.android.glass.sample.compass.CompassMenuActivity"
             android:theme="@style/MenuTheme" />
+        
+        <activity
+            android:name="com.google.android.glass.sample.compass.ShowFacts"
+            android:theme="@style/MenuTheme" />
 
         <service
             android:name="com.google.android.glass.sample.compass.CompassService"

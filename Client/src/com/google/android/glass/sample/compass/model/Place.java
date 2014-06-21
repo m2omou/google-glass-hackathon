@@ -19,6 +19,9 @@ package com.google.android.glass.sample.compass.model;
 import java.io.Serializable;
 import java.util.List;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+
 /**
  * This class represents a point of interest that has geographical coordinates (latitude and
  * longitude) and a name that is displayed to the user.
@@ -33,6 +36,8 @@ public class Place implements Serializable {
     private final String mCorrectAnswer;
     private final List<String> mAnswerChoices;
 
+    //public Intent pendingIntent = null;
+    
     /**
      * Initializes a new place with the specified coordinates and name.
      *

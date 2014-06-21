@@ -7,7 +7,9 @@ import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.TextView;
 
 public class ShowFacts extends Activity {
@@ -17,20 +19,82 @@ public class ShowFacts extends Activity {
 	private Place mPlace;
 	private List<String> anwsers;
 	private int current = -1;
+	private GestureDetector mGestureDetector;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		//android.os.Debug.waitForDebugger();
+		setContentView(R.layout.fact);
 		mPlace = (Place) getIntent().getExtras().getSerializable("place");
 		anwsers = mPlace.getAnswerChoices();
-		mFactView = (TextView) findViewById(R.id.fact);
+		mFactView = (TextView) findViewById(R.id.facts);
 		mFactView.setText(mPlace.getFacts());//TODO add Place.fact.
 		mTapView = (TextView) findViewById(R.id.tip_tap_for_options);
 		mTapView.setText("Tap to Answer");
+		
+		mGestureDetector = createGestureDetector(this);
 	}
 
+
+	 private GestureDetector createGestureDetector(Context context) {
+		    GestureDetector gestureDetector = new GestureDetector(context);
+		        //Create a base listener for generic gestures
+		        gestureDetector.setBaseListener( new GestureDetector.BaseListener() {
+		            @Override
+		            public boolean onGesture(Gesture gesture) {
+		                if (gesture == Gesture.TAP) {
+		                	if (current < 0) {
+		        				mFactView.setText(mPlace.getQuestion());
+		        				current++;
+		        			} else {
+		        				choose();
+		        			}
+		                    return true;
+		                } else if (gesture == Gesture.TWO_TAP) {
+		                    // do something on two finger tap
+		                    return true;
+		                } else if (gesture == Gesture.SWIPE_RIGHT) {
+		                	if (current >= 0) {
+		        				pass();
+		        			}
+		                    return true;
+		                } else if (gesture == Gesture.SWIPE_LEFT) {
+		                	back();
+		                    return true;
+		                }
+		                return false;
+		            }
+		        });
+		        gestureDetector.setFingerListener(new GestureDetector.FingerListener() {
+		            @Override
+		            public void onFingerCountChanged(int previousCount, int currentCount) {
+		              // do something on finger count changes
+		            }
+		        });
+		        gestureDetector.setScrollListener(new GestureDetector.ScrollListener() {
+		            @Override
+		            public boolean onScroll(float displacement, float delta, float velocity) {
+		                // do something on scrolling
+		            	return false;
+		            }
+		        });
+		        return gestureDetector;
+		    }
+
+		    /*
+		     * Send generic motion events to the gesture detector
+		     */
+		    @Override
+		    public boolean onGenericMotionEvent(MotionEvent event) {
+		        if (mGestureDetector != null) {
+		            return mGestureDetector.onMotionEvent(event);
+		        }
+		        return false;
+		    }
+	
 	protected void handleGameGesture(Gesture gesture) {
 		switch (gesture) {
 		case TAP:

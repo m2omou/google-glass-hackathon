@@ -68,7 +68,7 @@ public class Landmarks {
     /**
      * The list of landmarks loaded from resources.
      */
-    private final ArrayList<Place> mPlaces;
+    public static final ArrayList<Place> mPlaces = new ArrayList<Place>();
 
     private LocationManager mLocationManager;
     /**
@@ -76,7 +76,6 @@ public class Landmarks {
      * bundle.
      */
     public Landmarks(Context context) {
-        mPlaces = new ArrayList<Place>();
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         mContext = context;
         // This class will be instantiated on the service's main thread, and doing I/O on the
@@ -146,9 +145,10 @@ public class Landmarks {
         List<String> answerChoices = new ArrayList<String>();
         for (int i = 0; i < arrayAnswerChoices.length(); i = i + 1) {
         	JSONObject answerObject = arrayAnswerChoices.optJSONObject(i);
-        	answerChoices.add(answerObject.optString("content"));
+        	String answer = answerObject.optString("content");
+        	answerChoices.add(answer);
         	if (answerObject.optBoolean("correct") ) {
-        		correctAnswer = object.optString("content");
+        		correctAnswer = answer;
         	}
         }
         Log.i(TAG, name + " " + correctAnswer);
@@ -160,6 +160,7 @@ public class Landmarks {
              bundle.putSerializable("place", place);
              intent.putExtras(bundle);
              mLocationManager.addProximityAlert(latitude, longitude, 100, -1, PendingIntent.getActivity(mContext, 0, intent, 0));
+             //place.pendingIntent = intent;
              return place;
         } else {
             return null;
