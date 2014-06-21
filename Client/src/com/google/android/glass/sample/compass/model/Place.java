@@ -16,18 +16,19 @@
 
 package com.google.android.glass.sample.compass.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * This class represents a point of interest that has geographical coordinates (latitude and
  * longitude) and a name that is displayed to the user.
  */
-public class Place {
+public class Place implements Serializable {
 
     private final double mLatitude;
     private final double mLongitude;
     private final String mName;
-    private final List<String> mFacts;
+    private final String mFact;
     private final String mQuestion;
     private final String mCorrectAnswer;
     private final List<String> mAnswerChoices;
@@ -44,12 +45,12 @@ public class Place {
      * @param answerChoices the multiple choices for the question
      */
     public Place(double latitude, double longitude, String name,
-    		List<String> facts, String question, String correctAnswer, 
+    		String fact, String question, String correctAnswer, 
     		List<String> answerChoices) {
         mLatitude = latitude;
         mLongitude = longitude;
         mName = name;
-        mFacts = facts;
+        mFact = fact;
         mQuestion = question;
         mCorrectAnswer = correctAnswer;
         mAnswerChoices = answerChoices;
@@ -87,8 +88,8 @@ public class Place {
      *
      * @return the facts of the place
      */
-    public List<String> getFacts() {
-        return mFacts;
+    public String getFacts() {
+        return mFact;
     }
     
     /**

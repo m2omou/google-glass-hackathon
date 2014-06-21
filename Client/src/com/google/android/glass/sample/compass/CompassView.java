@@ -55,9 +55,9 @@ public class CompassView extends View {
     private static final int NEEDLE_COLOR = Color.RED;
     private static final float TICK_WIDTH = 2;
     private static final float TICK_HEIGHT = 10;
-    private static final float DIRECTION_TEXT_HEIGHT = 84.0f;
-    private static final float PLACE_TEXT_HEIGHT = 22.0f;
-    private static final float PLACE_PIN_WIDTH = 14.0f;
+    private static final float DIRECTION_TEXT_HEIGHT = 24.0f;
+    private static final float PLACE_TEXT_HEIGHT = 52.0f;
+    private static final float PLACE_PIN_WIDTH = 90.0f;
     private static final float PLACE_TEXT_LEADING = 4.0f;
     private static final float PLACE_TEXT_MARGIN = 8.0f;
 
@@ -135,7 +135,7 @@ public class CompassView extends View {
         mDistanceFormat.setMinimumFractionDigits(0);
         mDistanceFormat.setMaximumFractionDigits(1);
 
-        mPlaceBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.place_mark);
+        mPlaceBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.box1);
 
         // We use NaN to indicate that the compass is being drawn for the first
         // time, so that we can jump directly to the starting orientation
@@ -209,13 +209,13 @@ public class CompassView extends View {
             drawPlaces(canvas, pixelsPerDegree, i * pixelsPerDegree * 360);
         }
 
-        drawCompassDirections(canvas, pixelsPerDegree);
+//        drawCompassDirections(canvas, pixelsPerDegree);
 
         canvas.restore();
 
         mPaint.setColor(NEEDLE_COLOR);
-        drawNeedle(canvas, false);
-        drawNeedle(canvas, true);
+//        drawNeedle(canvas, false);
+//        drawNeedle(canvas, true);
     }
 
     /**
@@ -238,7 +238,7 @@ public class CompassView extends View {
                 mPaint.getTextBounds(direction, 0, direction.length(), mTextBounds);
 
                 canvas.drawText(direction,
-                        i * degreesPerTick * pixelsPerDegree - mTextBounds.width() / 2,
+                        i * degreesPerTick * pixelsPerDegree - mTextBounds.width()	,
                         mTextBounds.height() / 2, mPaint);
             } else {
                 // Draw a tick mark for the odd indices.
@@ -257,6 +257,7 @@ public class CompassView extends View {
      *         direction; used because place names are drawn three times to get proper wraparound
      */
     private void drawPlaces(Canvas canvas, float pixelsPerDegree, float offset) {
+    	//android.os.Debug.waitForDebugger();
         if (mOrientation.hasLocation() && mNearbyPlaces != null) {
             synchronized (mNearbyPlaces) {
                 Location userLocation = mOrientation.getLocation();
@@ -285,9 +286,9 @@ public class CompassView extends View {
                     // will finally be drawn.
                     Rect textBounds = new Rect();
                     mPlacePaint.getTextBounds(text, 0, text.length(), textBounds);
-                    textBounds.offsetTo((int) (offset + bearing * pixelsPerDegree
-                            + PLACE_PIN_WIDTH / 2 + PLACE_TEXT_MARGIN), canvas.getHeight() / 2
-                            - (int) PLACE_TEXT_HEIGHT);
+//                    textBounds.offsetTo((int) (offset + bearing * pixelsPerDegree
+//                            + PLACE_PIN_WIDTH / 2 + PLACE_TEXT_MARGIN), canvas.getHeight() / 2
+//                            - (int) PLACE_TEXT_HEIGHT);
 
                     // Extend the bounds rectangle to include the pin icon and a small margin
                     // to the right of the text, for the overlap calculations below.
@@ -338,7 +339,7 @@ public class CompassView extends View {
      * @param canvas the {@link Canvas} upon which to draw
      * @param bottom true to draw the bottom needle, or false to draw the top needle
      */
-    private void drawNeedle(Canvas canvas, boolean bottom) {
+/*    private void drawNeedle(Canvas canvas, boolean bottom) {
         float centerX = getWidth() / 2.0f;
         float origin;
         float sign;
@@ -364,7 +365,7 @@ public class CompassView extends View {
 
         canvas.drawPath(mPath, mPaint);
     }
-
+*/
     /**
      * Sets up a {@link ValueAnimator} that will be used to animate the compass
      * when the distance between two sensor events is large.

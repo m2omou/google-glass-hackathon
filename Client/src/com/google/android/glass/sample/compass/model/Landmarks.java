@@ -17,11 +17,23 @@
 package com.google.android.glass.sample.compass.model;
 
 import com.google.android.glass.sample.compass.R;
+import com.google.android.glass.sample.compass.ShowFacts;
 import com.google.android.glass.sample.compass.util.MathUtils;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,10 +49,19 @@ import java.util.List;
  * This class provides access to a list of hard-coded landmarks (located in
  * {@code res/raw/landmarks.json}) that will appear on the compass when the user is near them.
  */
-public class Landmarks {
+public class Landmarks{
 
+	public static Boolean areLoaded = false;
+	
+	public static Context mContext;
+	
     private static final String TAG = Landmarks.class.getSimpleName();
 
+    /**
+     * The url of the server for getting the landmarks list.
+     */
+    private static String SERVER_URL = "http://54.187.0.241:3000/targets.json";
+    
     /**
      * The threshold used to display a landmark on the compass.
      */
@@ -51,20 +72,21 @@ public class Landmarks {
      */
     private final ArrayList<Place> mPlaces;
 
+    private LocationManager mLocationManager;
     /**
      * Initializes a new {@code Landmarks} object by loading the landmarks from the resource
      * bundle.
      */
     public Landmarks(Context context) {
         mPlaces = new ArrayList<Place>();
-
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        mContext = context;
         // This class will be instantiated on the service's main thread, and doing I/O on the
         // main thread can be dangerous if it will block for a noticeable amount of time. In
         // this case, we assume that the landmark data will be small enough that there is not
         // a significant penalty to the application. If the landmark data were much larger,
         // we may want to load it in the background instead.
-        String jsonString = readLandmarksResource(context);
-        populatePlaceList(jsonString);
+        new ProgressTask().execute();
     }
 
     /**
@@ -114,27 +136,33 @@ public class Landmarks {
      * @throws JSONException 
      */
     private Place jsonObjectToPlace(JSONObject object) throws JSONException {
-        String name = object.optString("name");
+    	//android.os.Debug.waitForDebugger();
+        String name = object.optString("title");
         double latitude = object.optDouble("latitude", Double.NaN);
         double longitude = object.optDouble("longitude", Double.NaN);
         String question = object.optString("question");
-        JSONArray arrayFacts = object.getJSONArray("facts");
-        List<String> facts = new ArrayList<String>();
-        for (int i = 0; i <= arrayFacts.length(); i = i + 1) {
-        	facts.add(arrayFacts.getString(i));
-        }
+        String fact = object.optString("fact");
+        String correctAnswer = "";
         
-        JSONArray arrayAnswerChoices = object.getJSONArray("answer_choices");
+        JSONArray arrayAnswerChoices = object.getJSONArray("answers");
         List<String> answerChoices = new ArrayList<String>();
-        for (int i = 0; i <= arrayAnswerChoices.length(); i = i + 1) {
-        	answerChoices.add(arrayAnswerChoices.getString(i));
+        for (int i = 0; i < arrayAnswerChoices.length(); i = i + 1) {
+        	JSONObject answerObject = arrayAnswerChoices.optJSONObject(i);
+        	answerChoices.add(answerObject.optString("content"));
+        	if (answerObject.optBoolean("correct") ) {
+        		correctAnswer = object.optString("content");
+        	}
         }
-        
-        String correctAnswer = object.optString("question");
-
+        Log.i(TAG, name + " " + correctAnswer);
         if (!name.isEmpty() && !Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-            return new Place(latitude, longitude, name, facts, question,
+             Place place = new Place(latitude, longitude, name, fact, question,
             		correctAnswer, answerChoices);
+             Intent intent = new Intent(mContext, ShowFacts.class);
+             Bundle bundle = new Bundle();
+             bundle.putSerializable("place", place);
+             intent.putExtras(bundle);
+             mLocationManager.addProximityAlert(latitude, longitude, 100, -1, PendingIntent.getActivity(mContext, 0, intent, 0));
+             return place;
         } else {
             return null;
         }
@@ -143,32 +171,89 @@ public class Landmarks {
     /**
      * Reads the text from {@code res/raw/landmarks.json} and returns it as a string.
      */
-    private static String readLandmarksResource(Context context) {
-        InputStream is = context.getResources().openRawResource(R.raw.landmarks);
-        StringBuffer buffer = new StringBuffer();
+    private static String readLandmarksResource() {
+    	String jsonResponse = connect(SERVER_URL);
+    	Log.i(TAG, jsonResponse);
+    	return jsonResponse;
+    }
+    
+    /**
+     * Converts an InputStream to a String
+     * 
+     * @param is the input stream to convert
+     * @return the input stream as a String
+     */
+    private static String convertStreamToString(InputStream is) {
+        
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
 
+        String line = null;
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-            String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line);
-                buffer.append('\n');
+                sb.append(line + "\n");
             }
         } catch (IOException e) {
-            Log.e(TAG, "Could not read landmarks resource", e);
-            return null;
+            e.printStackTrace();
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "Could not close landmarks resource stream", e);
-                }
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+        return sb.toString();
+    }
+    
+    /**
+     * Connects to the given url and returns a JSONResponse as a String.
+     * 
+     * @param url the url to connect to
+     * @return a JSONResponse as a String
+     */
+    public static String connect(String url)
+    {
+    	//android.os.Debug.waitForDebugger();
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(url); 
+        HttpResponse response;
+        
+        try {
+            response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream instream = entity.getContent();
+                String result= convertStreamToString(instream);
+                instream.close();
+                return result;
+            }
+        } catch (ClientProtocolException e) {
+        } catch (IOException e) {
+        	Log.e(TAG, "Connect: ", e);
+        }
+        return null;
+    }
+    
+    private class ProgressTask extends AsyncTask<String, Void, Boolean> {
 
-        return buffer.toString();
+    	@Override
+    	protected void onPreExecute() {
+    		Landmarks.areLoaded = false;
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(Boolean success) {
+    		Landmarks.areLoaded = true;
+    	}
+    	
+		@Override
+		protected Boolean doInBackground(String... arg0) {
+			Log.i(TAG, "Start... ");
+			String jsonString = readLandmarksResource();
+	        populatePlaceList(jsonString);
+	        return null;
+		}
+    	
     }
     
 }
