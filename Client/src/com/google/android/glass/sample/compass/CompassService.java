@@ -113,7 +113,6 @@ public class CompassService extends Service {
         if (mLiveCard == null) {
             mLiveCard = new LiveCard(this, LIVE_CARD_TAG);
             mRenderer = new CompassRenderer(this, mOrientationManager, mLandmarks);
-
             mLiveCard.setDirectRenderingEnabled(true).getSurfaceHolder().addCallback(mRenderer);
 
             // Display the options menu when the live card is tapped.
