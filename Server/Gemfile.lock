@@ -30,6 +30,7 @@ GEM
     erubis (2.7.0)
     hike (1.2.3)
     i18n (0.6.9)
+    json (1.8.1)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -79,6 +80,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json
   rails (= 4.0.1)
   rails-api
   sqlite3
