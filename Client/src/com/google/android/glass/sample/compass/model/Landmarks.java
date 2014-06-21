@@ -45,8 +45,6 @@ import java.util.List;
  * {@code res/raw/landmarks.json}) that will appear on the compass when the user is near them.
  */
 public class Landmarks {
-
-	public static Boolean areLoaded = false;
 	
     private static final String TAG = Landmarks.class.getSimpleName();
 
@@ -221,16 +219,6 @@ public class Landmarks {
     
     private class ProgressTask extends AsyncTask<String, Void, Boolean> {
 
-    	@Override
-    	protected void onPreExecute() {
-    		Landmarks.areLoaded = false;
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(Boolean success) {
-    		Landmarks.areLoaded = true;
-    	}
-    	
 		@Override
 		protected Boolean doInBackground(String... arg0) {
 			Log.i(TAG, "Start... ");
