@@ -1,4 +1,5 @@
 GoogleGlass::Application.routes.draw do
+  resources :scores, except: [:new, :edit]
   resources :answers, except: [:new, :edit]
   resources :targets, except: [:new, :edit]
   # The priority is based upon order of creation: first created -> highest priority.
