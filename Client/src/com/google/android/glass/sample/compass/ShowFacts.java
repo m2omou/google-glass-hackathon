@@ -33,7 +33,7 @@ public class ShowFacts extends Activity {
 		mFactView = (TextView) findViewById(R.id.facts);
 		mFactView.setText(mPlace.getFacts());//TODO add Place.fact.
 		mTapView = (TextView) findViewById(R.id.tip_tap_for_options);
-		mTapView.setText("Tap to Answer");
+		mTapView.setText("Tap to Continue");
 		
 		mGestureDetector = createGestureDetector(this);
 	}
@@ -48,6 +48,7 @@ public class ShowFacts extends Activity {
 		                if (gesture == Gesture.TAP) {
 		                	if (current < 0) {
 		        				mFactView.setText(mPlace.getQuestion());
+		        				mTapView.setText("Tap to Answer");
 		        				current++;
 		        			} else {
 		        				choose();
