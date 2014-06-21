@@ -113,7 +113,7 @@ public class CompassRenderer implements DirectRenderingCallback {
         mLayout = (FrameLayout) inflater.inflate(R.layout.compass, null);
         mLayout.setWillNotDraw(false);
 
-        mCompassView = (CompassView) mLayout.findViewById(R.id.compass);
+        mCompassView = (CompassView) mLayout.findViewById(R.id.fact);
         mTipsContainer = (RelativeLayout) mLayout.findViewById(R.id.tips_container);
         mTipsView = (TextView) mLayout.findViewById(R.id.tips_view);
 
