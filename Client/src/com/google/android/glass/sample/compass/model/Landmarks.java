@@ -44,7 +44,7 @@ public class Landmarks {
     /**
      * The threshold used to display a landmark on the compass.
      */
-    private static final double MAX_DISTANCE_KM = 10;
+    private static final double MAX_DISTANCE_KM = 100000;
 
     /**
      * The list of landmarks loaded from resources.
@@ -111,14 +111,30 @@ public class Landmarks {
 
     /**
      * Converts a JSON object that represents a place into a {@link Place} object.
+     * @throws JSONException 
      */
-    private Place jsonObjectToPlace(JSONObject object) {
+    private Place jsonObjectToPlace(JSONObject object) throws JSONException {
         String name = object.optString("name");
         double latitude = object.optDouble("latitude", Double.NaN);
         double longitude = object.optDouble("longitude", Double.NaN);
+        String question = object.optString("question");
+        JSONArray arrayFacts = object.getJSONArray("facts");
+        List<String> facts = new ArrayList<String>();
+        for (int i = 0; i <= arrayFacts.length(); i = i + 1) {
+        	facts.add(arrayFacts.getString(i));
+        }
+        
+        JSONArray arrayAnswerChoices = object.getJSONArray("answer_choices");
+        List<String> answerChoices = new ArrayList<String>();
+        for (int i = 0; i <= arrayAnswerChoices.length(); i = i + 1) {
+        	answerChoices.add(arrayAnswerChoices.getString(i));
+        }
+        
+        String correctAnswer = object.optString("question");
 
         if (!name.isEmpty() && !Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-            return new Place(latitude, longitude, name);
+            return new Place(latitude, longitude, name, facts, question,
+            		correctAnswer, answerChoices);
         } else {
             return null;
         }
@@ -154,4 +170,5 @@ public class Landmarks {
 
         return buffer.toString();
     }
+    
 }

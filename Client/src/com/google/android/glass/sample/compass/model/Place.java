@@ -16,6 +16,8 @@
 
 package com.google.android.glass.sample.compass.model;
 
+import java.util.List;
+
 /**
  * This class represents a point of interest that has geographical coordinates (latitude and
  * longitude) and a name that is displayed to the user.
@@ -25,6 +27,10 @@ public class Place {
     private final double mLatitude;
     private final double mLongitude;
     private final String mName;
+    private final List<String> mFacts;
+    private final String mQuestion;
+    private final String mCorrectAnswer;
+    private final List<String> mAnswerChoices;
 
     /**
      * Initializes a new place with the specified coordinates and name.
@@ -32,11 +38,21 @@ public class Place {
      * @param latitude the latitude of the place
      * @param longitude the longitude of the place
      * @param name the name of the place
+     * @param facts the facts of the place
+     * @param question the question for the place
+     * @param correctAnswer the correct answer for the question
+     * @param answerChoices the multiple choices for the question
      */
-    public Place(double latitude, double longitude, String name) {
+    public Place(double latitude, double longitude, String name,
+    		List<String> facts, String question, String correctAnswer, 
+    		List<String> answerChoices) {
         mLatitude = latitude;
         mLongitude = longitude;
         mName = name;
+        mFacts = facts;
+        mQuestion = question;
+        mCorrectAnswer = correctAnswer;
+        mAnswerChoices = answerChoices;
     }
 
     /**
@@ -65,4 +81,41 @@ public class Place {
     public String getName() {
         return mName;
     }
+    
+    /**
+     * Gets the facts of the place.
+     *
+     * @return the facts of the place
+     */
+    public List<String> getFacts() {
+        return mFacts;
+    }
+    
+    /**
+     * Gets the question for the place.
+     *
+     * @return the question for the place
+     */
+    public String getQuestion() {
+        return mQuestion;
+    }
+    
+    /**
+     * Gets the correct answer for the question of place.
+     *
+     * @return the correct answer for the question of the place
+     */
+    public String getCorrectAnswer() {
+        return mCorrectAnswer;
+    }
+    
+    /**
+     * Gets the possible answers for the question of the place.
+     *
+     * @return possible answers for the question of the place
+     */
+    public List<String> getAnswerChoices() {
+        return mAnswerChoices;
+    }
+    
 }
