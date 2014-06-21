@@ -505,3 +505,13 @@ Processing by TargetsController#index as JSON
   [1m[35mAnswer Load (0.2ms)[0m  SELECT "answers".* FROM "answers" WHERE "answers"."target_id" = ?  [["target_id", 1]]
   [1m[36mAnswer Load (0.2ms)[0m  [1mSELECT "answers".* FROM "answers" WHERE "answers"."target_id" = ?[0m  [["target_id", 2]]
 Completed 200 OK in 9ms (Views: 1.2ms | ActiveRecord: 0.7ms)
+DEPRECATION WARNING: You didn't set config.secret_key_base. Read the upgrade documentation to learn more about this new config option. (called from service at /usr/local/rvm/rubies/ruby-1.9.3-p392/lib/ruby/1.9.1/webrick/httpserver.rb:138)
+
+
+Started GET "/targets.json" for 127.0.0.1 at 2014-06-21 05:23:46 -0700
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by TargetsController#index as JSON
+  [1m[35mTarget Load (0.4ms)[0m  SELECT "targets".* FROM "targets"
+  [1m[36mAnswer Load (4.3ms)[0m  [1mSELECT "answers".* FROM "answers" WHERE "answers"."target_id" = ?[0m  [["target_id", 1]]
+  [1m[35mAnswer Load (0.2ms)[0m  SELECT "answers".* FROM "answers" WHERE "answers"."target_id" = ?  [["target_id", 2]]
+Completed 200 OK in 79ms (Views: 1.3ms | ActiveRecord: 5.9ms)

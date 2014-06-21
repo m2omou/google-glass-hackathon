@@ -1,5 +1,5 @@
 class TargetsController < ApplicationController
-  require 'json'
+
 
   # GET /targets
   # GET /targets.json
