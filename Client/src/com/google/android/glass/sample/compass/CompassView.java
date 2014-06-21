@@ -57,7 +57,7 @@ public class CompassView extends View {
     private static final float TICK_HEIGHT = 10;
     private static final float DIRECTION_TEXT_HEIGHT = 24.0f;
     private static final float PLACE_TEXT_HEIGHT = 52.0f;
-    private static final float PLACE_PIN_WIDTH = 60.0f;
+    private static final float PLACE_PIN_WIDTH = 90.0f;
     private static final float PLACE_TEXT_LEADING = 4.0f;
     private static final float PLACE_TEXT_MARGIN = 8.0f;
 
@@ -135,7 +135,7 @@ public class CompassView extends View {
         mDistanceFormat.setMinimumFractionDigits(0);
         mDistanceFormat.setMaximumFractionDigits(1);
 
-        mPlaceBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.place_mark);
+        mPlaceBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.box1);
 
         // We use NaN to indicate that the compass is being drawn for the first
         // time, so that we can jump directly to the starting orientation
