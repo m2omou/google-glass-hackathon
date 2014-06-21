@@ -16,13 +16,14 @@
 
 package com.google.android.glass.sample.compass.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * This class represents a point of interest that has geographical coordinates (latitude and
  * longitude) and a name that is displayed to the user.
  */
-public class Place {
+public class Place implements Serializable {
 
     private final double mLatitude;
     private final double mLongitude;

@@ -1,5 +1,6 @@
 class Answer < ActiveRecord::Base
   belongs_to :target
+  has_many :scores
 
   # overwrite the as_json method to add avatar and thumb
   def as_json(options={})

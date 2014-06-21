@@ -1,11 +1,17 @@
 class AnswersController < ApplicationController
   # GET /answers
   # GET /answers.json
+  include ActionController::MimeResponds
+
   def index
     @answers = Answer.all
 
-    render json: @answers
+    respond_to do |format|
+      format.html
+      format.json { render json: @answers }
+    end
   end
+
 
   # GET /answers/1
   # GET /answers/1.json

@@ -17,10 +17,15 @@
 package com.google.android.glass.sample.compass.model;
 
 import com.google.android.glass.sample.compass.R;
+import com.google.android.glass.sample.compass.ShowFacts;
 import com.google.android.glass.sample.compass.util.MathUtils;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -46,6 +51,8 @@ import java.util.List;
  */
 public class Landmarks {
 	
+	public static Context mContext;
+	
     private static final String TAG = Landmarks.class.getSimpleName();
 
     /**
@@ -63,13 +70,15 @@ public class Landmarks {
      */
     private final ArrayList<Place> mPlaces;
 
+    private LocationManager mLocationManager;
     /**
      * Initializes a new {@code Landmarks} object by loading the landmarks from the resource
      * bundle.
      */
     public Landmarks(Context context) {
         mPlaces = new ArrayList<Place>();
-
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        mContext = context;
         // This class will be instantiated on the service's main thread, and doing I/O on the
         // main thread can be dangerous if it will block for a noticeable amount of time. In
         // this case, we assume that the landmark data will be small enough that there is not
@@ -144,8 +153,14 @@ public class Landmarks {
         }
         Log.i(TAG, name + " " + correctAnswer);
         if (!name.isEmpty() && !Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-            return new Place(latitude, longitude, name, fact, question,
+             Place place = new Place(latitude, longitude, name, fact, question,
             		correctAnswer, answerChoices);
+             Intent intent = new Intent(mContext, ShowFacts.class);
+             Bundle bundle = new Bundle();
+             bundle.putSerializable("place", place);
+             intent.putExtras(bundle);
+             mLocationManager.addProximityAlert(latitude, longitude, 100, -1, PendingIntent.getActivity(mContext, 0, intent, 0));
+             return place;
         } else {
             return null;
         }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140621115006) do
+ActiveRecord::Schema.define(version: 20140621184716) do
 
   create_table "answers", force: true do |t|
     t.integer  "target_id"
@@ -19,6 +19,13 @@ ActiveRecord::Schema.define(version: 20140621115006) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "correct"
+  end
+
+  create_table "scores", force: true do |t|
+    t.integer  "target_id"
+    t.text     "answer_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "targets", force: true do |t|
