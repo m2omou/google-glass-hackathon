@@ -257,6 +257,7 @@ public class CompassView extends View {
      *         direction; used because place names are drawn three times to get proper wraparound
      */
     private void drawPlaces(Canvas canvas, float pixelsPerDegree, float offset) {
+    	//android.os.Debug.waitForDebugger();
         if (mOrientation.hasLocation() && mNearbyPlaces != null) {
             synchronized (mNearbyPlaces) {
                 Location userLocation = mOrientation.getLocation();
